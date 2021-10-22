@@ -8,6 +8,7 @@
     "start": "webpack server -c config/webpack.config.js --mode=development",
     "build": "webpack -c config/webpack.config.js --mode=production"
   },
+  "bin": {},
   "author": "cs",
   "license": "ISC",
   "devDependencies": {

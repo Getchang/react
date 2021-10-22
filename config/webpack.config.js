@@ -1,19 +1,19 @@
 /*
  * @Author: your name
  * @Date: 2021-06-24 16:43:02
- * @LastEditTime: 2021-07-08 18:05:58
+ * @LastEditTime: 2021-10-22 15:58:08
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /tags/webpack/config/webpack.config.js
  */
 const fs = require('fs');
-const path = require('path')
+const path = require('path');
 const webpack = require('webpack');
-const TerserPlugin = require("terser-webpack-plugin");
+const TerserPlugin = require('terser-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin; 
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const paths = require('./paths');
 const { vendor } = require('postcss');
 
@@ -30,13 +30,13 @@ const sassModuleRegex = /\.module\.(scss|sass)$/;
 module.exports = (env, argv) => {
   // console.log(env, argv)
   // console.log(process.env)
-  process.env.NODE_ENV = argv.mode
-  
+  process.env.NODE_ENV = argv.mode;
+
   const isEnvDevelopment = process.env.NODE_ENV === 'development';
   const isEnvProduction = process.env.NODE_ENV === 'production';
 
   const commonCssLoader = [
-    isEnvDevelopment && "style-loader",
+    isEnvDevelopment && 'style-loader',
     isEnvProduction && {
       loader: MiniCssExtractPlugin.loader,
     },
@@ -47,26 +47,26 @@ module.exports = (env, argv) => {
       options: {
         postcssOptions: {
           ident: 'postcss',
-          plugins: () => [require('postcss-preset-env')()]
-        }
-      }
-    }
-  ].filter(Boolean)
-  
+          plugins: () => [require('postcss-preset-env')()],
+        },
+      },
+    },
+  ].filter(Boolean);
+
   const config = {
     mode: process.env.NODE_ENV,
     // 解决dev-server不生效，（package,加browersList字段引起）
     target: process.env.NODE_ENV === 'development' ? 'web' : 'browserslist',
     entry: {
-      main: paths.appIndexJs
+      main: paths.appIndexJs,
     },
     output: {
-      filename: (pathData) => {
-        return pathData.chunk.name === 'vendor' ? "static/js/[name].js" : "static/js/[name].[contenthash:8].js"
+      filename: pathData => {
+        return pathData.chunk.name === 'vendor' ? 'static/js/[name].js' : 'static/js/[name].[contenthash:8].js';
       },
-      chunkFilename:'static/js/[name].[chunkhash:8].js',
+      chunkFilename: 'static/js/[name].[chunkhash:8].js',
       path: paths.appBuild,
-      clean: true
+      clean: true,
     },
     // devtool: isEnvDevelopment ? "eval-source-map" : "cheap-module-source-map",
     devServer: {
@@ -75,7 +75,7 @@ module.exports = (env, argv) => {
       hot: isEnvDevelopment,
       compress: true,
       hotOnly: true,
-      open: true
+      open: true,
     },
     module: {
       rules: [
@@ -91,7 +91,7 @@ module.exports = (env, argv) => {
                     name: 'static/media/[name].[hash:8].[ext]',
                   },
                 },
-              ]
+              ],
             },
             {
               test: /\.(js)$/,
@@ -99,23 +99,22 @@ module.exports = (env, argv) => {
               exclude: /(node_modules|bower_components)/,
               loader: 'babel-loader',
               options: {
-                presets: ['@babel/preset-env', "@babel/preset-react"]
+                presets: ['@babel/preset-env', '@babel/preset-react'],
               },
             },
             {
               test: cssRegex,
               exclude: cssModuleRegex,
-              use: [...commonCssLoader]
+              use: [...commonCssLoader],
             },
             {
               test: sassRegex,
               exclude: sassModuleRegex,
-              use:[...commonCssLoader, "sass-loader"]
-      
-            }
-          ]
-        }
-      ]
+              use: [...commonCssLoader, 'sass-loader'],
+            },
+          ],
+        },
+      ],
     },
     plugins: [
       new HtmlWebpackPlugin(
@@ -123,24 +122,24 @@ module.exports = (env, argv) => {
           {},
           {
             inject: true,
-            template: paths.appHtml
+            template: paths.appHtml,
           },
           isEnvProduction
-              ? {
-                  minify: {
-                    removeComments: true,
-                    collapseWhitespace: true,
-                    removeRedundantAttributes: true,
-                    useShortDoctype: true,
-                    removeEmptyAttributes: true,
-                    removeStyleLinkTypeAttributes: true,
-                    keepClosingSlash: true,
-                    minifyJS: true,
-                    minifyCSS: true,
-                    minifyURLs: true,
-                  },
-                }
-              : undefined
+            ? {
+                minify: {
+                  removeComments: true,
+                  collapseWhitespace: true,
+                  removeRedundantAttributes: true,
+                  useShortDoctype: true,
+                  removeEmptyAttributes: true,
+                  removeStyleLinkTypeAttributes: true,
+                  keepClosingSlash: true,
+                  minifyJS: true,
+                  minifyCSS: true,
+                  minifyURLs: true,
+                },
+              }
+            : undefined
         )
       ),
       isEnvDevelopment && new webpack.HotModuleReplacementPlugin(),
@@ -148,16 +147,14 @@ module.exports = (env, argv) => {
         filename: 'static/css/[name].[contenthash:8].css',
         chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
       }),
-      isEnvProduction && new BundleAnalyzerPlugin()
+      isEnvProduction && new BundleAnalyzerPlugin(),
     ].filter(Boolean),
     resolve: {
-      extensions: paths.moduleFileExtensions
-          .map(ext => `.${ext}`)
-          .filter(ext => useTypeScript || !ext.includes('ts')),
+      extensions: paths.moduleFileExtensions.map(ext => `.${ext}`).filter(ext => useTypeScript || !ext.includes('ts')),
 
       alias: {
-        '@': paths.appSrc
-      }
+        '@': paths.appSrc,
+      },
     },
     optimization: {
       minimize: true,
@@ -169,7 +166,7 @@ module.exports = (env, argv) => {
               comments: false,
             },
           },
-          extractComments: false
+          extractComments: false,
         }),
         new CssMinimizerPlugin(),
       ],
@@ -183,22 +180,22 @@ module.exports = (env, argv) => {
         cacheGroups: {
           vendors: {
             name: 'vendor',
-            chunks: "initial",
+            chunks: 'initial',
             test: /[\\/]node_modules[\\/]/,
             priority: -10,
             reuseExistingChunk: true,
           },
-          common:{
-            chunks: "all",
+          common: {
+            chunks: 'all',
             name: 'common',
             minChunks: 2,
             priority: -20,
             reuseExistingChunk: true,
-          }
-        }
-      }
-    }
-  }
+          },
+        },
+      },
+    },
+  };
   // console.log(commonCssLoader, config)
-  return config
-}
+  return config;
+};
