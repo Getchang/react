@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2021-06-24 16:43:02
- * @LastEditTime: 2021-10-22 15:58:08
+ * @LastEditTime: 2022-01-24 09:58:00
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /tags/webpack/config/webpack.config.js
@@ -26,7 +26,6 @@ const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
 
 // console.log(appDirectory, resolveApp('public/index.html'), path.resolve(__dirname, './public/index.html'), path.resolve(__dirname, '../src/index.js'))
-
 module.exports = (env, argv) => {
   // console.log(env, argv)
   // console.log(process.env)
@@ -69,6 +68,7 @@ module.exports = (env, argv) => {
       clean: true,
     },
     // devtool: isEnvDevelopment ? "eval-source-map" : "cheap-module-source-map",
+    devtool: isEnvProduction ? false : 'eval-cheap-module-source-map',
     devServer: {
       contentBase: paths.appBuild,
       port: 9000,
@@ -99,7 +99,17 @@ module.exports = (env, argv) => {
               exclude: /(node_modules|bower_components)/,
               loader: 'babel-loader',
               options: {
-                presets: ['@babel/preset-env', '@babel/preset-react'],
+                presets: [
+                  [
+                    '@babel/preset-env',
+                    {
+                      modules: false,
+                      useBuiltIns: 'usage',
+                      corejs: 3,
+                    },
+                  ],
+                  '@babel/preset-react',
+                ],
               },
             },
             {
